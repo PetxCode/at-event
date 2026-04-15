@@ -1,0 +1,13 @@
+services:
+  ai-event-fe:
+    build: .
+    container_name: ai-event-fe
+    ports:
+      - 5173:80
+    restart: unless-stopped
+    networks:
+      - ai-event-network
+
+networks:
+  ai-event-network:
+    driver: bridge

@@ -1,0 +1,37 @@
+services:
+  ai-event-be:
+    build: .
+    container_name: ai-event-be
+    ports:
+      - 5000:5000
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - PORT=5000
+    restart: unless-stopped
+    depends_on:
+      - mongo
+    networks:
+      - ai-event-network
+
+  mongo:
+    image: mongo:7
+    container_name: mongo
+    ports:
+      - 27017:27017
+    volumes:
+      - mongo-data:/data/db
+    restart: unless-stopped
+    networks:
+      - ai-event-network
+
+volumes:
+  mongo-data:
+
+networks:
+  ai-event-network:
+    name: ai-event-network
+    driver: bridge
+

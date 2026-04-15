@@ -1,0 +1,73 @@
+services:
+  # ─── Nginx Reverse Proxy ───────────────────────────────────────────────────
+  nginx:
+    image: nginx:stable-alpine
+    container_name: ai-event-nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    restart: unless-stopped
+    depends_on:
+      - ai-event-fe
+      - ai-event-be
+    networks:
+      - ai-event-network
+
+  # ─── Frontend (React/Vite → Nginx) ────────────────────────────────────────
+  ai-event-fe:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: ai-event-fe
+    ports:
+      - "5173:80"
+    restart: unless-stopped
+    depends_on:
+      - ai-event-be
+    networks:
+      - ai-event-network
+
+
+  # ─── Backend (Node / Express) ──────────────────────────────────────────────
+  ai-event-be:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: ai-event-be
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=production
+      - PORT=5000
+      - MONGO_URI=mongodb://mongo:27017/AIBusinessDB
+    restart: unless-stopped
+    depends_on:
+      - mongo
+    networks:
+      - ai-event-network
+
+  # ─── MongoDB ───────────────────────────────────────────────────────────────
+  mongo:
+    image: mongo:7
+    container_name: ai-event-mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    restart: unless-stopped
+    networks:
+      - ai-event-network
+
+# ─── Volumes ──────────────────────────────────────────────────────────────────
+volumes:
+  mongo-data:
+
+# ─── Network ──────────────────────────────────────────────────────────────────
+networks:
+  ai-event-network:
+    name: ai-event-network
+    driver: bridge
