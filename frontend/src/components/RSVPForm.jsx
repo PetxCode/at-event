@@ -20,8 +20,9 @@ const RSVPForm = () => {
     setStatus('loading');
     
     try {
-      // In production, configure API URL in env. Using localhost for demo.
-      const response = await axios.post('http://localhost:5000/api/register', formData);
+      // API URL is loaded from VITE_API_URL env variable
+      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+      const response = await axios.post(`${API_URL}/api/register`, formData);
       setStatus('success');
       setMessage(response.data.message || 'Registration successful! We will be in touch with your approval status.');
       setFormData({ name: '', email: '', jobTitle: '', company: '' });

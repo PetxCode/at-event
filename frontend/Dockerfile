@@ -10,6 +10,10 @@ COPY package*.json .
 
 RUN npm install
 
+# Accept build-time env variable for the API URL (required by Vite)
+ARG VITE_API_URL
+ENV VITE_API_URL=$VITE_API_URL
+
 COPY . .
 
 RUN npm run build

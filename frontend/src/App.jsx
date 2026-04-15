@@ -1,10 +1,13 @@
 import React from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Hero from './components/Hero';
 import Speakers from './components/Speakers';
 import RSVPForm from './components/RSVPForm';
+import Participants from './pages/Participants';
 import './index.css';
 
-function App() {
+// ─── Main Event Page ─────────────────────────────────────────────────────────
+function EventPage() {
   return (
     <div className="App">
       {/* Dynamic Navbar */}
@@ -32,6 +35,18 @@ function App() {
         </div>
       </footer>
     </div>
+  );
+}
+
+// ─── Root App with Router ─────────────────────────────────────────────────────
+function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<EventPage />} />
+        <Route path="/participants" element={<Participants />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
